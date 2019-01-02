@@ -523,6 +523,8 @@ cd kafka-manager-1.3.3.22
 
 .
 
+.
+
 -	시작 스크립트
 
 ```shell

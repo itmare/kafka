@@ -120,7 +120,7 @@ Kafka 디자인
 
 -	실행 시, 표시 정보
 
-```java
+```json
       total   used  free  shared  buff/cache  available
 Mem:  31896   9776  1811  1617    20309       20016
 Swap: 10239   0     10239

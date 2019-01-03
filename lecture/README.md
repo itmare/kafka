@@ -34,7 +34,7 @@ Kafka 개요
 
 ### 특징
 
-![kafka-streaming-platform](./pictures/kafka-streaming-platform.png)
+<img src="./pictures/kafka-streaming-platform.png" width="500" assign="center">
 
 -	High Throughput
 -	실시간 로그 통합

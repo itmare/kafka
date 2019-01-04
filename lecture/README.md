@@ -19,6 +19,7 @@ Kafka 개요
 
 ### pub/sub 모델
 
+-	(준비중: 비교될 만한 모델)
 -	publish, subscribe
 -	메시지에 특정한 수신자가 정해져 있지 않음
 -	구독을 신청한 수신자에게 전달
@@ -34,7 +35,7 @@ Kafka 개요
 
 ### 특징
 
-<img src="./pictures/kafka-streaming-platform.png" width="500" assign="center">
+<img src="./pictures/kafka-streaming-platform.png" width="600">
 
 -	High Throughput
 -	실시간 로그 통합
@@ -43,9 +44,11 @@ Kafka 개요
 -	간단한 scale-out
 -	producer와 consumer 역할 분리
 
-![kafka-streaming-platform-linkedin](./pictures/kafka-streaming-platform-linkedin.png)
+<img src="./pictures/kafka-streaming-platform-linkedin.png" width="700">
 
--	**offset < partition < topic < broker < kafka cluster**
+-	### offset < partition < topic < broker < kafka cluster
+
+<br><br>
 
 ### zookeeper?
 
@@ -64,15 +67,19 @@ Kafka 개요
 -	처리량 그래프
 	-	ZooKeeper release 3.2 running on servers
 	-	dual 2Ghz Xeon
-	-	two SATA 15K RPM drives ![zookeeper-server-num](./pictures/zookeeper-server-num.png)<br><br>
+	-	two SATA 15K RPM drives
+
+<img src="./pictures/zookeeper-server-num.png" width="600">
+
+<br><br>
 
 ##### - 읽기는 로컬에서 처리, 쓰기는 리더
 
-![zookeeper-struc](./pictures/zookeeper-struc.png) ![zookeeper-struc2](./pictures/zookeeper-struc2.png)
+<img src="./pictures/zookeeper-struc.png" width="600"> <img src="zookeeper-struc2](./pictures/zookeeper-struc2.png" width="600">
 
 ##### - 주키퍼와 카프카 구조
 
-![zookeeper-kafka-struc](./pictures/zookeeper-kafka-struc.png)
+<img src="./pictures/zookeeper-kafka-struc.png" width="600">
 
 <br><br><br><br><br>
 
@@ -83,6 +90,8 @@ Kafka 디자인
 
 ---
 
+<br><br>
+
 ### motivation
 
 -	대량의 실시간 데이터를 다루기 위해 카프카 개발
@@ -91,6 +100,8 @@ Kafka 디자인
 -	빠른 전송 속도 보장
 -	분산, 분할, 실시간 처리를 위해 생겨난 것이 파티셔닝과 컨슈머 모델
 -	장비의 장애 상황이라도 안정적인 서비스 유지
+
+<br><br>
 
 ### Persistence
 
@@ -106,15 +117,37 @@ Kafka 디자인
 	-	Java Garbage Collection은 heap 데이터가 증가할 수록 불편하고, 느리다.
 -	여러 이유들로 페이지 캐시에 의존하는 것이 유리하므로 페이지 캐시를 사용한다.
 -	서비스가 재시작되어도, 새로 캐시가 메모리에 만들어지거나 캐시 초기화를 하더라도 패이지 캐시는 유지된다.
--	모든 데이터는 반드시 디스크로 내리지 않고, 페이지 캐시로 저장된다. ![kafka-page-cache01](./pictures/kafka-page-cache01.png) ![kafka-page-cache02](./pictures/kafka-page-cache02.png)
+-	모든 데이터는 반드시 디스크로 내리지 않고, 페이지 캐시로 저장된다.
+
+<img src="./pictures/kafka-page-cache01.png" width="700">
+
+<br>
+
+<img src="./pictures/kafka-page-cache02.png" width="600">
+
+<br><br>
 
 ### Page Cache
 
--	준비중
+-	하드 디스크와 같은 보조 저장 장치에서 생성된 페이지들을 저장하는 transparent 캐시를 패이지캐시(디스크캐시)라 함
+-	os는 사용하지 않는 부분의 메모리를 페이지 캐시로 유지하여, 페이지 캐시의 컨텐츠를 빠른 엑세스로 전반적으로 성능향상을 가질 수 있다.
+-	애플리케이션으로 직접 할당되지 않은 모든 물리 메모리는 OS에 의해 페이지 캐시로 사용된다.
+-	페이지 캐시는 애플리케이션에서 요청하게 되면 쉽게 재할당
+-	캐시된 페이지는 쉽게 제거하고 재사용할 수 있기 때문에 일부 OS에서는 페이지 캐시를 available 메모리로 리포팅하기도 한다.
+-	수정된 페이지 캐시의 페이지들은 dirty page
+
+<br><br>
 
 ### dirty page
 
--	준비중
+-	페이지 캐시는 디스크로 쓰는 것도 돕고, 디스크로 데이터가 write되는 동안 수정된 메인 메모리의 페이지들은 "dirty"라고 표시되고, 페이지들은 해제되기 전 반드시 디스크로 플러시 되어야 한다.
+-	파일 기록이 발생하면, 특정 블락의 캐시된 페이지가 조회되고 만약 페이지 캐시에 이미 있다면, 메인 메모리의 페이지로 쓰기가 완료
+-	만약 페이지 캐시에서 찾을 수 없다면, 쓰기는 페이지에 기록되고 그 페이지는 디스크에서는 읽을 수 없지만 할당되어 있는 상태이며, dirty로 표시
+-	이후 디스크에 변경 내용을 반영함으로서, 완료
+-	페이지 캐시와 디스크 내용이 다르기 때문에 시스템이 꺼지거나 하면 정합성 문제 발생
+-	매번 flush하게 되면, IO부하가 있어 커널에서 특정 조건으로 디스크로 flush한다.
+
+<br><br>
 
 ### free -m
 
@@ -134,9 +167,31 @@ Swap: 10239   0     10239
 -	available: 상요 가능한 메모리
 -	used보다 available이 더 크면, page cache에서 바로 할당해줌, 메모리가 부족한게 아님
 
+<br><br>
+
 ### Effiiency
 
--	준비중
+-	효율성에 상당한 노력을 기울였고, 주목적은 대량의 web activity data를 처리하는 것
+-	downstream 인프라 구조에서 application 사용에 있어 작은 충돌로 병목이 쉽게 일어난다면 작은 변화에도 문제가 발생
+-	수십 수백개의 중앙 집중 클러스터가 사용 패턴에 의해 자주 바뀌는 서비스를 지원할 때 매우 중요
+-	비효율적인 disk access를 제외하고 나면, 나머지 비효율성은 2가지
+	-	너무 작은 I/O operation
+		-	<img src="./pictures/inefficiency01.png" width="400">
+	-	과도한 byte copying
+		-	<img src="./pictures/inefficiency02.png" width="400">
+-	파일에서 소켓으로 데이터 전달을 위한 일반 데이터 경로
+	1.	os는 커널 스페이스의 페이지캐시인 디스크로부터 데이터를 읽는다.
+	2.	애플리케이션은 유저 스페이스 버퍼인 커널 스페이스에서 데이터를 읽는다.
+	3.	애플리케이션은 커널 스페이스를 거쳐 소켓 버퍼에 데이터를 기록한다.
+	4.	os는 소켓 버퍼에서 NIC버퍼로 데이터를 복사한다.
+
+<img src="./pictures/os-kernel.png">
+
+-	sendfile을 이용하여, OS가 데이터를 페이지 캐시에서 네트워크로 직접 보낼 수 있게 함으로서, 중복 copy를 피할 수 있다. 초적화된 경로는 오직 NIC로만 필요 (그림확인)
+-	하나의 토픽에 다수의 컨슈머가 사용될 것이라고 ㅇ예상하고 데이터는 각 컨슘 요청에 따라 페이지 캐시에 정확히 한번 복사되고, 재사용된다.
+-	이러한 동작은 네트워크 한계에 가까운 속도까지 컨슘될 수 있도록 한다.
+
+<br><br>
 
 ### Topic
 
@@ -144,6 +199,8 @@ Swap: 10239   0     10239
 -	메일 서버의 메일주소와 같은 역할
 -	토픽 이름은 249자 미만으로 영문, 숫자, .-_ 만 가능
 -	prefix로 사용 (A-log, B-log 요런식으로..)
+
+<br><br>
 
 ### Partition
 
@@ -154,11 +211,11 @@ Swap: 10239   0     10239
 -	파티션을 늘리는건 운영중에도 가능, 노프랍
 -	파티션을 줄이는건 불가능, 꼭 줄여야 된다. (삭제 방법 밖에 없음)
 
-![partition01](./pictures/partition01.png)
+<img src="./pictures/partition01.png" width="600">
 
 메시지를 하나씩 보내면 카프카 뉴스 토픽에 들어가는데 4초
 
-![partition02](./pictures/partition02.png)
+<img src="./pictures/partition02.png" width="600">
 
 뉴스 토픽을 파티션 4개로 쪼개버리고, 프로듀스도 4개 병렬로 메시지 보내기 총 1초
 

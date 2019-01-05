@@ -507,25 +507,53 @@ Kafka Manager
 -	java 베이스
 -	토픽, 오프셋, 브로커, 파티션 정보 확인 가능
 -	https://github.com/yahoo/kafka-manager#kafka-manager
+-	다운로드: https://github.com/yahoo/kafka-manager/releases
 
 ```shell
 wget https://github.com/yahoo/kafka-manager/archive/1.3.3.22.tar.gz
 tar -zxvf 1.3.3.22.tar.gz
 cd kafka-manager-1.3.3.22
-./sbt clean dist
 ```
 
--	준비중
+-	kafka manager를 설치하기 위한 zip file 빌드하고, 찾고, 가져와서, unzip
 
-.
+```shell
+./sbt clean dist
 
-.
+...  오래 걸림 ...
 
-.
+[info] Done packaging.
+[info]
+[info] Your package is ready in /usr/local/kafka-manager-1.3.3.22/target/universal/kafka-manager-1.3.3.22.zip
+[info]
+[success] Total time: 172 s, completed 2019. 1. 1 오전 00:00:00
+```
 
-.
+bin/kafka-manager -Dapplication.home=.
 
--	시작 스크립트
+-	kafka manager systemd에 등록
+
+```shell
+vi /etc/systemd/system/kafkamanager-server.service
+```
+
+-	아래 추가
+
+```shell
+[Unit]
+Description=KafkaManger
+After=network.target
+
+[Service]
+SyslogIdentifier=kafka-manager
+ExecStart=/usr/local/sbin/kafka-manager-start.sh
+ExecStop=/usr/local/sbin/kafka-manager-stop.sh
+
+[Install]
+WantedBy=multi-user.target
+```
+
+-	앱 시작 위한 스크립트
 
 ```shell
 vi /usr/local/sbin/kafka-manager-start.sh
@@ -541,12 +569,12 @@ if [ ! -z "$kafkaManagerPidFile" ]; then
   /bin/rm -rf $kafkaManagerPidFile
   /usr/local/kafka-manager/bin/kafka-manager -Dconfig.file=/usr/local/kafka-manager/conf/application.conf -Dhttp.port=9000
 else
-  echo "Alredy kafka-manager started"
+  echo "already kafka-manager started"
   exit 1
 fi
 ```
 
--	종료 스크립트
+-	앱 종료 위한 스크립트
 
 ```shell
 vi /usr/local/sbin/kafka-manager-stop.sh
@@ -597,6 +625,77 @@ systemctl daemon-reload
 cd /usr/local/sbin/
 chmod u+x kafka-manager-st*
 ```
+
+-	시작
+
+```shell
+systemctl start kafkamanager-server
+```
+
+-	kafka manager에 JMX 허용
+
+```shell
+# 카프카 시작시, 포트 추가
+vi /usr/local/kafka/bin/kafka-server-start.sh
+export JMX_PORT=9999
+
+# 재시작
+systemctl restart kafka-server
+systemctl restart kafkamanager-server
+```
+
+<kbd><img src="./pictures/kafka-manager-01.png" width="600"></kbd>
+
+<kbd><img src="./pictures/kafka-manager-02.png" width="600"></kbd>
+
+<kbd><img src="./pictures/kafka-manager-03.png" width="600"></kbd>
+
+<kbd><img src="./pictures/kafka-manager-04.png" width="600"></kbd>
+
+<kbd><img src="./pictures/kafka-manager-05.png" width="600"></kbd>
+
+<br><br><br><br><br>
+
+---
+
+Kafka Data Pipeline
+===================
+
+---
+
+filebeat
+--------
+
+-	filebeat 다운로드
+
+```shell
+rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
+```
+
+<br><br><br>
+
+NIFI
+----
+
+-	데이터 흐름을 정의하고, 정의된 흐름대로 자동으로 실행해주는 애플리케이션
+-	웹 기반의 인터페이스를 제공
+-	NSA(the United States National Security Agency)에서 만들어졌고, 원래 이름은 나이아가라폭포를 연상시키는 Niagarafiles
+-	Hortonworks에서 리딩
+
+<br><br><br>
+
+ElasticSearch
+-------------
+
+-	엘라스틱의 분산형 RESTful 검색 및 분석 엔진
+-	빠르다. 빠른 속도로 데이터 엑세스
+-	수평적 확장이 가능
+-	어떤 데이터든 가능
+
+<br><br><br>
+
+Kibana
+------
 
 .
 

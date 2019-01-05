@@ -644,15 +644,25 @@ systemctl restart kafka-server
 systemctl restart kafkamanager-server
 ```
 
-<kbd><img src="./pictures/kafka-manager-01.png" width="600"></kbd><br>
+<kbd><img src="./pictures/kafka-manager-01.png" width="600"></kbd>
 
-<kbd><img src="./pictures/kafka-manager-02.png" width="600"></kbd><br>
+<br><br>
 
-<kbd><img src="./pictures/kafka-manager-03.png" width="600"></kbd><br>
+<kbd><img src="./pictures/kafka-manager-02.png" width="600"></kbd>
 
-<kbd><img src="./pictures/kafka-manager-04.png" width="600"></kbd><br>
+<br><br>
 
-<kbd><img src="./pictures/kafka-manager-05.png" width="600"></kbd><br>
+<kbd><img src="./pictures/kafka-manager-03.png" width="600"></kbd>
+
+<br><br>
+
+<kbd><img src="./pictures/kafka-manager-04.png" width="600"></kbd>
+
+<br><br>
+
+<kbd><img src="./pictures/kafka-manager-05.png" width="600"></kbd>
+
+<br>
 
 <br><br><br><br><br>
 

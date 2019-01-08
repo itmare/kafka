@@ -637,12 +637,15 @@ systemctl start kafkamanager-server
 ```shell
 # 카프카 시작시, 포트 추가
 vi /usr/local/kafka/bin/kafka-server-start.sh
+# 아무대나 추가
 export JMX_PORT=9999
 
 # 재시작
 systemctl restart kafka-server
 systemctl restart kafkamanager-server
 ```
+
+-	kafka manager 둘러보기
 
 <kbd><img src="./pictures/kafka-manager-01.png" width="600"></kbd>
 
@@ -673,6 +676,10 @@ Kafka Data Pipeline
 
 ---
 
+-	구조
+
+-	< img 추가 >
+
 filebeat
 --------
 
@@ -682,32 +689,237 @@ filebeat
 rpm --import https://packages.elastic.co/GPG-KEY-elasticsearch
 ```
 
-<br><br><br>
+-	elastic repo 추가
+
+```shell
+vi /etc/yum.repos.d/elastic.repo
+
+#추가
+[elastic-6.x]
+name=Elastic repository for 6.x packages
+baseurl=https://artifacts.elastic.co/packages/6.x/yum
+gpgcheck=1
+gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+autorefresh=1
+type=rpm-md
+```
+
+-	설치
+
+```shell
+yum install -y filebeat
+```
+
+-	filebeat config 설정
+
+```shell
+vi /etc/filebeat/filebeat.yml
+```
+
+```shell
+#======= Filebeat prospectors
+kafka.home: /usr/local/kafka
+filebeat.prospectors:
+- input_type: log
+  paths:
+    - ${kafka.home}/logs/server.log*
+  multiline.pattern: '^\['
+  multiline.negate: true
+  multiline.match: after
+  fields.pipeline: kafka-logs
+#======= Filebeat modules
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+#====== Elasticsearch template setting
+
+setup.template.settings:
+  index.number_of_shards: 3
+
+#========== KAFKA output
+output.kafka:
+  hosts: ["itmare01:9092", "itmare02:9092", "itmare03:9092"]  #====> 프로듀서 컨피그
+
+  topic: 'itmare-log'
+  partition.round_robin:uuu
+    reachable_only: false
+
+  required_acks: 1            #=======> 우리가 아는 ack옵션
+  compression: gzip           #========> gzip으로 압축해서 보내겠다
+  max_message_bytes: 1000000  #==> 최대사이즈는 1메가로 하겠다.
+```
+
+-	토픽생성
+
+```shell
+/usr/local/kafka/bin/kafka-topics.sh --create --zookeeper itmare01/kafka01 --replication-factor 3 --partitions 4 --topic itmare-log
+```
+
+-	토픽 콘솔 테스트
+
+```shell
+# producer
+/usr/local/kafka/bin/kafka-console-producer.sh --broker-list itmare01:9092,itmare02:9092,itmare03:9092 --topic itmare-log
+
+# consumer
+/usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server itmare01:9092,itmare02:9092,itmare03:9092 --topic itmare-log
+```
+
+-	filebeat 실행/정지 (자동 설정되어 있음)
+
+```shell
+systemctl start filebeat.service
+systemctl stop filebeat.service
+```
+
+-	kafka manager에서 filebeat를 통해 해당토픽에 kafka server로그가 적재되는지 확인
+
+<kbd><img src="./pictures/filebeat-check-logloaded.png"></kbd>
+
+<br><br><br><br><br>
 
 NIFI
 ----
 
--	데이터 흐름을 정의하고, 정의된 흐름대로 자동으로 실행해주는 애플리케이션
--	웹 기반의 인터페이스를 제공
--	NSA(the United States National Security Agency)에서 만들어졌고, 원래 이름은 나이아가라폭포를 연상시키는 Niagarafiles
--	Hortonworks에서 리딩
+-	nifi 다운로드 (1번 서버에 설치)
 
-<br><br><br>
+```shell
+cd /usr/local
+wget http://mirror.navercorp.com/apache/nifi/1.8.0/nifi-1.8.0-bin.tar.gz
+tar -zxvf nifi-1.8.0-bin.tar.gz
+ln -s nifi-1.8.0 nifi
+```
+
+-	컨피그 설정 변경
+
+```shell
+cd nifi
+vi nifi.properties
+
+# 다음을 변경/추가
+nifi.web.http.host=peter-kafka47.foo.bar  #==> 수정 (설치한 서버의 호스트 정보)
+nifi.zookeeper.connect.string=itmare01:2181,itmare02:2181,itmare03:2181   
+# ==> znode따로 넣지마라: "nifi.zookeeper.root.node=" 여기서 알아서 znode 설정해준다.)
+```
+
+-	설치
+
+```shell
+/usr/local/nifi/bin/nifi.sh install nifi
+```
+
+-	시작/확인
+
+```shell
+service nifi start
+service nifi status
+```
+
+-	web 접속: http://itmare01:8080/nifi/
+
+<br><br><br><br><br>
 
 ElasticSearch
 -------------
 
--	엘라스틱의 분산형 RESTful 검색 및 분석 엔진
--	빠르다. 빠른 속도로 데이터 엑세스
--	수평적 확장이 가능
--	어떤 데이터든 가능
+-	es 다운로드 (2번 서버에 설치)
 
-<br><br><br>
+```shell
+yum install -y elasticsearch
+```
+
+-	컨피그 설정
+
+```shell
+vi /etc/elasticsearch/elasticsearch.yml
+
+# 전체 삭제 후 추가
+path.data: /var/lib/elasticsearch
+path.logs: /var/log/elasticsearch
+cluster.name: itmare-es
+node.name: itmare02
+network.bind_host: 0.0.0.0
+http.port: 9200
+transport.tcp.port: 9300
+```
+
+-	es 시작/확인
+
+```shell
+systemctl start elasticsearch.service
+systemctl stop elasticsearch.service
+```
+
+-	web 접속: http://itmare02:9200
+
+<br><br><br><br><br>
 
 Kibana
 ------
 
-.
+-	kibana 다운로드 (3번 서버)
+
+```shell
+yum install -y kibana
+```
+
+-	컨피그 설정
+
+```shell
+vi /etc/kibana/kibana.yml
+
+# 전체 삭제 후 추가
+server.host: "0.0.0.0"
+elasticsearch.url: "http://itmare02:9200" #(itmare02 => es가 설치된 서버 ip)
+```
+
+-	kibana 시작/확인
+
+```shell
+systemctl start kibana.service
+systemctl status kibana.service
+```
+
+-	web 접속: http://itmare03:5601 (itmare03 => kibana가 설치된 서버 ip)
+
+<br><br><br><br><br>
+
+Pipelining
+----------
+
+-	접속: http://itmare01:8080/nifi/
+
+<kbd><img src="./pictures/pipeline-log-01.png"></kbd> - 첫화면<br>
+
+<kbd><img src="./pictures/pipeline-log-02.png"></kbd> - 프로세스 그룹 생성<br>
+
+<kbd><img src="./pictures/pipeline-log-03.png"></kbd> - consumerkafka 선택<br>
+
+<kbd><img src="./pictures/pipeline-log-04.png"></kbd> - putElasticsearch 선택<br>
+
+<kbd><img src="./pictures/pipeline-log-05.png"></kbd> - consumerKafka 설정<br>
+
+<kbd><img src="./pictures/pipeline-log-06.png"></kbd> - putElasticsearch 설정1 <br>
+
+<kbd><img src="./pictures/pipeline-log-07.png"></kbd> - putElasticsearch 설정2<br>
+
+<kbd><img src="./pictures/pipeline-log-08.png"></kbd> - 연결1<br>
+
+<kbd><img src="./pictures/pipeline-log-09.png"></kbd> - 연결2<br>
+
+<kbd><img src="./pictures/pipeline-log-10.png"></kbd> - 컨슈밍 시작<br>
+
+<kbd><img src="./pictures/pipeline-log-11.png"></kbd> - 메시지 갯수확인1<br>
+
+<kbd><img src="./pictures/pipeline-log-12.png"></kbd> - 메시지 갯수확인2<br>
+
+<kbd><img src="./pictures/pipeline-log-13.png"></kbd> - 생성된 인덱스 확인1<br>
+
+<kbd><img src="./pictures/pipeline-log-14.png"></kbd> - 생성된 인덱스 확인2<br>
+
+<kbd><img src="./pictures/pipeline-log-15.png"></kbd> - 생성된 인덱스 확인3<br>
 
 .
 

@@ -19,7 +19,6 @@ Kafka 개요
 
 ### pub/sub 모델
 
--	(준비중: 비교될 만한 모델)
 -	publish, subscribe
 -	메시지에 특정한 수신자가 정해져 있지 않음
 -	구독을 신청한 수신자에게 전달
@@ -337,7 +336,35 @@ Replication
 
 -	리더가 골고루 분산되어 있는지 확인 항상 필요!
 
--	<br><br>준비중<br><br>
+<bdk><img src="./pictures/replication-01.png"></bdk>
+
+-	브로커가 3대 있다.
+
+<bdk><img src="./pictures/replication-02.png"></bdk>
+
+-	토픽이 있고, 토픽이 복제된다고 가정(partition이 1일 경우라 생각)
+
+<bdk><img src="./pictures/replication-03.png"></bdk>
+
+-	replication-factor에 따라 복제 (이 경우 2)
+
+<bdk><img src="./pictures/replication-04.png"></bdk>
+
+-	리더가 노란색
+
+<bdk><img src="./pictures/replication-05.png"></bdk>
+
+-	replication-factor 3일 경우
+
+<bdk><img src="./pictures/replication-06.png"></bdk>
+
+-	파티션이 3일 경우
+
+<bdk><img src="./pictures/replication-07.png"></bdk>
+
+-	각 토픽별, 파티션별 리더의 위치, 리더가 분산 되어야 한다.
+
+<br><br>
 
 ### ISR (In Sync Replica)
 
@@ -352,9 +379,10 @@ Replication
 ### Controller
 
 -	카프카 클러스터는 하나의 토픽, 하나의 파티션만 다루는게 아니다. 수백 수천의 파티션을 관리한다.
+-	브로커중에 하나가 controller역할
 -	소수의 브로커로 쏠리는 현상을 방지하기 위해 클러스터 내부에서 파티션을 round-robin방식으로 균형을 맞추려 한다.
 -	리더를 선출하는 과정을 최적화하는 것은 매우 중요
--	노드 장애로 리더 역할을 하고 있던 모든 파티션에 대해 역할이 끝나게 되면, 리덛 선출이 동작한다.
+-	노드 장애로 리더 역할을 하고 있던 모든 파티션에 대해 역할이 끝나게 되면, 리더 선출이 동작한다.
 -	클러스터 내 브로커 중 하나가 컨트롤러(주키퍼)역할을 하고 새로운 리더를 결정하고 모든 브로커에게 전달
 -	배치로 빠르고 정확하게 처리하기 위해 컨트롤러 동작
 
@@ -364,11 +392,7 @@ Replication
 -	unix의 파일 시스템처럼 node간에 hierarchy namespace를 가지고, /(슬레쉬)를 사용한다.
 -	기존 파일 시스템과의 차이점은 zookeeper는 file과 directory의 개념이 없어 znode하나만 쓰인다.
 
-![znode](./pictures/znode.png)
-
-### RabbitMQ
-
--	준비중
+<img src="./pictures/znode.png" width="700">
 
 <br><br><br><br><br>
 
@@ -658,23 +682,21 @@ Consumer
 -	잘 동작할 수 있지만, 프로듀서가 토픽으로 쓰는 비율을 높인다면?
 -	컨슈머는 프로듀서의 속도를 따라가지 못하게 된다.
 -	확장할 수 있어야 한다. (확장하기 위해 컨슈머그룹이란 개념을 사용)
-
-<br>
-
--	준비중-시작
+-	콘솔 컨슈머에서는 default로 컨슈머그룹을 임의적으로 만든다.
 -	목적
 	-	장애에 따른 가용성
 	-	그룹별 offset 관리 가능
 -	컨슈머그룹 만들때, 동일한 이름의 컨슈머그룹이 존재하는지 체크해야함
--	준비중-끝
 
 <br>
 
 ##### 컨슈머그룹과 파티션 수의 관계
 
+![consumer-group01](./pictures/consumer-group01.png)
+
 -	각각의 파티션은 하나의 컨슈머그룹에 하나의 컨슈머하고만 연결된다.
 
-![consumer-group01](./pictures/consumer-group01.png) ![consumer-group02](./pictures/consumer-group02.png)
+![consumer-group02](./pictures/consumer-group02.png)
 
 -	컨슈머가 하나였다가 3개로 늘어나면, 리발란싱이 일어난다.
 

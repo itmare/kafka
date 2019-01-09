@@ -676,12 +676,16 @@ Kafka Data Pipeline
 
 ---
 
+실습1: 카프카 로그 es/kibana
+----------------------------
+
 -	구조
 
--	< img 추가 >
+<kbd><img src="./pictures/pipeline-p01-archi.png" width="700"></kbd>
 
-filebeat
---------
+<br><br>
+
+### filebeat
 
 -	filebeat 다운로드
 
@@ -780,8 +784,7 @@ systemctl stop filebeat.service
 
 <br><br><br><br><br>
 
-NIFI
-----
+### NIFI
 
 -	nifi 다운로드 (1번 서버에 설치)
 
@@ -821,8 +824,7 @@ service nifi status
 
 <br><br><br><br><br>
 
-ElasticSearch
--------------
+### ElasticSearch
 
 -	es 다운로드 (2번 서버에 설치)
 
@@ -856,8 +858,7 @@ systemctl stop elasticsearch.service
 
 <br><br><br><br><br>
 
-Kibana
-------
+### Kibana
 
 -	kibana 다운로드 (3번 서버)
 
@@ -897,11 +898,11 @@ Pipelining
 
 <kbd><img src="./pictures/pipeline-log-03.png"></kbd> - consumerkafka 선택<br>
 
-<kbd><img src="./pictures/pipeline-log-04.png"></kbd> - putElasticsearch 선택<br>
+<kbd><img src="./pictures/pipeline-log-04.png"></kbd> - putElasticsearchHttp 선택<br>
 
 <kbd><img src="./pictures/pipeline-log-05.png"></kbd> - consumerKafka 설정<br>
 
-<kbd><img src="./pictures/pipeline-log-06.png"></kbd> - putElasticsearch 설정1 <br>
+<kbd><img src="./pictures/pipeline-log-06.png"></kbd> - putElasticsearch 설정1 : bts-log-${now():format("yyyy.MM.dd")}<br>
 
 <kbd><img src="./pictures/pipeline-log-07.png"></kbd> - putElasticsearch 설정2<br>
 
@@ -921,7 +922,36 @@ Pipelining
 
 <kbd><img src="./pictures/pipeline-log-15.png"></kbd> - 생성된 인덱스 확인3<br>
 
-.
+<br><br><br><br><br>
+
+실습2: logstash활용 트위터 특정 키워드 관련 데이터 수집/저장
+------------------------------------------------------------
+
+-	구조
+
+### Logstash
+
+-	producer.conf 생성
+
+```shell
+ogstash API endpoint {:port=>9600}
+input {
+    twitter {
+        consumer_key => "QKjqcyMJxxxxxxxxxxxxx"
+        consumer_secret => "TQSgALe7W56jz1sEgd3Mxxxxxxxxxxxxxxxxxxxxxxx"
+        oauth_token => "40755086-zqkqglEKSvdxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+        oauth_token_secret => "AK4bccV1juSIKY5Q6zzIMoS6xxxxxxxxxxxxxxxxxxxxx"
+        keywords => ["방탄소년단","BTS"]
+        full_tweet => true
+    }
+}
+output {
+  kafka {
+  topic_id => "bts-topic"
+  codec => json
+    }
+}
+```
 
 .
 

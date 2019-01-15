@@ -336,31 +336,31 @@ Replication
 
 -	리더가 골고루 분산되어 있는지 확인 항상 필요!
 
-<bdk><img src="./pictures/replication-01.png"></bdk>
+<bdk><img src="./pictures/replication-01.png" width="600"></bdk>
 
 -	브로커가 3대 있다.
 
-<bdk><img src="./pictures/replication-02.png"></bdk>
+<bdk><img src="./pictures/replication-02.png" width="600"></bdk>
 
 -	토픽이 있고, 토픽이 복제된다고 가정(partition이 1일 경우라 생각)
 
-<bdk><img src="./pictures/replication-03.png"></bdk>
+<bdk><img src="./pictures/replication-03.png" width="600">\></bdk>
 
 -	replication-factor에 따라 복제 (이 경우 2)
 
-<bdk><img src="./pictures/replication-04.png"></bdk>
+<bdk><img src="./pictures/replication-04.png" width="600">\></bdk>
 
 -	리더가 노란색
 
-<bdk><img src="./pictures/replication-05.png"></bdk>
+<bdk><img src="./pictures/replication-05.png" width="600">\></bdk>
 
 -	replication-factor 3일 경우
 
-<bdk><img src="./pictures/replication-06.png"></bdk>
+<bdk><img src="./pictures/replication-06.png" width="600">\></bdk>
 
 -	파티션이 3일 경우
 
-<bdk><img src="./pictures/replication-07.png"></bdk>
+<bdk><img src="./pictures/replication-07.png" width="600">\></bdk>
 
 -	각 토픽별, 파티션별 리더의 위치, 리더가 분산 되어야 한다.
 
@@ -392,7 +392,7 @@ Replication
 -	unix의 파일 시스템처럼 node간에 hierarchy namespace를 가지고, /(슬레쉬)를 사용한다.
 -	기존 파일 시스템과의 차이점은 zookeeper는 file과 directory의 개념이 없어 znode하나만 쓰인다.
 
-<img src="./pictures/znode.png" width="700">
+<img src="./pictures/znode.png" width="600">
 
 <br><br><br><br><br>
 
@@ -425,15 +425,15 @@ acks # 통신 방식
 -	매우 빠르게 전송할 수 있지만, 파티션의 리더가 받았는지는 알 수 없음
 -	메시지 유실가능성 높음
 
-![producer-ack-0-01](./pictures/producer-ack-0-01.png)
+<img src="./pictures/producer-ack-0-01.png" width="600">
 
 -	토픽의 리더로 A를 보내면 프로듀서의 역할은 끝 (A가 갔든 안갔든 돈케어)
 
-![producer-ack-0-02](./pictures/producer-ack-0-02.png)
+<img src="./pictures/producer-ack-0-02.png" width="600">
 
 -	토픽의 리더로 B를 보내면 프로듀서의 역할은 끝 (B가 갔든 안갔든 돈케어)
 
-![producer-ack-0-03](./pictures/producer-ack-0-03.png)
+<img src="./pictures/producer-ack-0-03.png" width="600">
 
 -	토픽의 리더로 C를 보내면 프로듀서의 역할은 끝 (C가 갔든 안갔든 돈케어)
 
@@ -445,67 +445,67 @@ acks # 통신 방식
 -	가장 많이 사용되고, 대부분 기본값으로 설정되어 있다. (filebeat등의 프로듀서 앱 같은거)
 -	프로듀서 앱 사용 시, 반드시 acks의 기본값이 어떤 걸로 설정되어있는지 확인 필요
 
-![producer-ack-1-01](./pictures/producer-ack-1-01.png)
+<img src="./pictures/producer-ack-1-01.png" width="600">
 
 -	프로듀서는 A라는 메시지를 보낼 준비한다.<br><br>
 
-![producer-ack-1-02](./pictures/producer-ack-1-02.png)
+<img src="./pictures/producer-ack-1-02.png" width="600">
 
 -	A를 리더에게 보낸다<br><br>
 
-![producer-ack-1-03](./pictures/producer-ack-1-03.png)
+<img src="./pictures/producer-ack-1-03.png" width="600">
 
 -	메시지가 잘 들어갔으면 리더는 프로듀서에게 ack를 보낸다.<br><br>
 
-![producer-ack-1-04](./pictures/producer-ack-1-04.png)
+<img src="./pictures/producer-ack-1-04.png" width="600">
 
 -	B를 보낼 준비한다.<br><br>
 
-![producer-ack-1-05](./pictures/producer-ack-1-05.png)
+<img src="./pictures/producer-ack-1-05.png" width="600">
 
 -	A는 내부적으로 replication일어나고, 리더는 B를 받는다.<br><br>
 
-![producer-ack-1-06](./pictures/producer-ack-1-06.png)
+<img src="./pictures/producer-ack-1-06.png" width="600">
 
 -	리더는 프로듀서에게 B를 잘 받았다고 ack를 보낸다.<br><br>
 
-![producer-ack-1-07](./pictures/producer-ack-1-07.png)
+<img src="./pictures/producer-ack-1-07.png" width="600">
 
 -	내부적으로 B의 replication을 준비한다.<br><br>
 
-![producer-ack-1-08](./pictures/producer-ack-1-08.png)
+<img src="./pictures/producer-ack-1-08.png" width="600">
 
 -	프로듀서는 C 준비, 근데 B복제의 찰나 rack2가 죽는다.<br><br>
 
-![producer-ack-1-09](./pictures/producer-ack-1-09.png)
+<img src="./pictures/producer-ack-1-09.png" width="600">
 
 -	리더가 rack1로 변경된다.<br><br>
 
-![producer-ack-1-10](./pictures/producer-ack-1-10.png)
+<img src="./pictures/producer-ack-1-10.png" width="600">
 
 -	프로듀서는 C를 새로운 리더에게 보낸다.<br><br>
 
-![producer-ack-1-11](./pictures/producer-ack-1-11.png)
+<img src="./pictures/producer-ack-1-11.png" width="600">
 
 -	뉴리더는 c를 받는다.<br><br>
 
-![producer-ack-1-12](./pictures/producer-ack-1-12.png)
+<img src="./pictures/producer-ack-1-12.png" width="600">
 
 -	뉴리더는 C에 대한 ack를 프로듀서에게 보내고, 남아있는 팔로우(rack3)에게 replication한다.<br><br>
 
-![producer-ack-1-13](./pictures/producer-ack-1-13.png)
+<img src="./pictures/producer-ack-1-13.png" width="600">
 
 -	프로듀서는 D를 준비한다.<br><br>
 
-![producer-ack-1-14](./pictures/producer-ack-1-14.png)
+<img src="./pictures/producer-ack-1-14.png" width="600">
 
 -	D의 ack를 보낸 후, replication한다.<br><br>
 
-![producer-ack-1-15](./pictures/producer-ack-1-15.png)
+<img src="./pictures/producer-ack-1-15.png" width="600">
 
 -	이때, rack2가 복구되고, 팔로우로 합류한다.<br><br>
 
-![producer-ack-1-16](./pictures/producer-ack-1-16.png)
+<img src="./pictures/producer-ack-1-16.png" width="600">
 
 -	new리더(rack1)는 old리더(rack2:현재는팔로워)에게 replication을 한다. <br><br>
 
@@ -516,35 +516,35 @@ acks # 통신 방식
 -	메시지 전송은 느리지만, 손실 없는 메시지 전송이 가능하다.
 -	min.insync.replicas 옵션은 프로듀서가 acks=all로 설정하여 메시지를 보낼 때, write를 성공하기 위한 최소 복제본의 수를 의미한다. (브로커의 옵션임: server.properties, default: 1) -
 
-![producer-ack-all-01](./pictures/producer-ack-all-01.png)
+<img src="./pictures/producer-ack-all-01.png" width="600">
 
 -	프로듀서는 ack와 상관없이 A를 리더에게 쏜다.<br><br>
 
-![producer-ack-all-02](./pictures/producer-ack-all-02.png)
+<img src="./pictures/producer-ack-all-02.png" width="600">
 
 -	min.insync.replicas(최소 replica갯수)의 설정 적용<br><br>
 
-![producer-ack-all-03](./pictures/producer-ack-all-03.png)
+<img src="./pictures/producer-ack-all-03.png" width="600">
 
 -	replica갯수가 2이기때문에 하나를 팔로워에게 replication<br><br>
 
-![producer-ack-all-04](./pictures/producer-ack-all-04.png)
+<img src="./pictures/producer-ack-all-04.png" width="600">
 
 -	리더는 replication체크를 하고 프로듀서에게 ack를 보낸다. <br><br>
 
-![producer-ack-all-05](./pictures/producer-ack-all-05.png)
+<img src="./pictures/producer-ack-all-05.png" width="600">
 
 -	replica갯수가 3일 경우,<br><br>
 
-![producer-ack-all-06](./pictures/producer-ack-all-06.png)
+<img src="./pictures/producer-ack-all-06.png" width="600">
 
 -	A가 총갯수가 3이 되고, 리더는 체크한다.<br><br>
 
-![producer-ack-all-07](./pictures/producer-ack-all-07.png)
+<img src="./pictures/producer-ack-all-07.png" width="600">
 
 -	리더는 프로듀서에게 ack를 보낸다.<br><br>
 
-![producer-ack-all-08](./pictures/producer-ack-all-08.png)
+<img src="./pictures/producer-ack-all-08.png" width="600">
 
 -	만약, 3개의 브로커중에 하나가 죽었다면, <br><br>
 -	즉, 요구조건 충족 하지 못하면, 프로듀서가 쏘는데로 에러가 난다.
@@ -558,7 +558,7 @@ acks # 통신 방식
 -	key 내용을 해쉬해서 그 key시작하는 건 특정 파티션에만 들어가게 한다.
 -	user id같은 유니크한 값들을 받아서 쓸때, 유저아이디를 키값으로 쓰는 경우가 종종 있다.
 
-![key-value-01](./pictures/key-value-01.png)
+<img src="./pictures/key-value-01.png" width="600">
 
 -	A는 파티0으로, B는 파티션1로 정의해서 보낼 순 없다.
 
@@ -590,31 +590,31 @@ Consumer
 
 ### Not Ack
 
-![consumer-ackoff-01](./pictures/consumer-ackoff-01.png)
+<img src="./pictures/consumer-ackoff-01.png" width="600">
 
 -	5개의 메시지를 가진 broker1이 있다.
 
-![consumer-ackoff-02](./pictures/consumer-ackoff-02.png)
+<img src="./pictures/consumer-ackoff-02.png" width="600">
 
 -	consumer가 메시지1~3을 pull하자마서 broker에 있는 메시지 삭제
 
-![consumer-ackoff-03](./pictures/consumer-ackoff-03.png)
+<img src="./pictures/consumer-ackoff-03.png" width="600">
 
 -	컨슈머가 메시지를 처리
 
-![consumer-ackoff-04](./pictures/consumer-ackoff-04.png)
+<img src="./pictures/consumer-ackoff-04.png" width="600">
 
 -	메시지1을 처리하고 메시지2~3을 가지고 있던 컨슈머가 죽음 (메시지2~3은 사라짐)
 
-![consumer-ackoff-05](./pictures/consumer-ackoff-05.png)
+<img src="./pictures/consumer-ackoff-05.png" width="600">
 
 -	새로운 컨슈머 등장
 
-![consumer-ackoff-06](./pictures/consumer-ackoff-06.png)
+<img src="./pictures/consumer-ackoff-06.png" width="600">
 
 -	컨슈머는 브로커에서 메시지를 다시 가져오기 시작 (메시지4~5)
 
-![consumer-ackoff-07](./pictures/consumer-ackoff-07.png)
+<img src="./pictures/consumer-ackoff-07.png" width="600">
 
 -	컨슈머가 메시지4~5 처리 (결과적으로 메시지2~3은 손실)
 
@@ -622,35 +622,35 @@ Consumer
 
 ### Ack
 
-![consumer-ackon-01](./pictures/consumer-ackon-01.png)
+<img src="./pictures/consumer-ackon-01.png" width="600">
 
 -	브로커에 5개의 메시지 있음
 
-![consumer-ackon-02](./pictures/consumer-ackon-02.png)
+<img src="./pictures/consumer-ackon-02.png" width="600">
 
 -	컨슈머가 메시지1~3을 가져갔지만, 브로커에서 삭제 하지 않음
 
-![consumer-ackon-03](./pictures/consumer-ackon-03.png)
+<img src="./pictures/consumer-ackon-03.png" width="600">
 
 -	컨슈머가 처리한 메시지1에 대해서 ack를 브로에게 보냄
 
-![consumer-ackon-04](./pictures/consumer-ackon-04.png)
+<img src="./pictures/consumer-ackon-04.png" width="600">
 
 -	ack확인 후, 브로커는 메시지1을 삭제
 
-![consumer-ackon-05](./pictures/consumer-ackon-05.png)
+<img src="./pictures/consumer-ackon-05.png" width="600">
 
 -	컨슈머가 메시지2를 처리한 후에 ack가 브로커에게 보내지지 않음
 
-![consumer-ackon-06](./pictures/consumer-ackon-06.png)
+<img src="./pictures/consumer-ackon-06.png" width="600">
 
 -	브로커가 아직 메시지2에 대한 ack를 받지 못했는데, 컨슈머가 죽음
 
-![consumer-ackon-07](./pictures/consumer-ackon-07.png)
+<img src="./pictures/consumer-ackon-07.png" width="600">
 
 -	새로운 컨슈머 등장
 
-![consumer-ackon-08](./pictures/consumer-ackon-08.png)
+<img src="./pictures/consumer-ackon-08.png" width="600">
 
 -	새로운 컨슈머는 메시지2~4를 pull하고, 메시지2은 스토리지에 이미 저장되어 있음, 컨슈머가 메시지2를 전달하게 되면 중복대한 이슈 발생
 
@@ -667,11 +667,15 @@ Consumer
 
 -	파티션 하나 일때,
 
-	-	오프셋 순서대로 받는다. ![offset-order-issue01](./pictures/offset-order-issue01.png)
+	-	오프셋 순서대로 받는다.
+
+	<img src="./pictures/offset-order-issue01.png" width="600">
 
 -	파티션 두개이상 일때,
 
-	-	전체 메시지 순서대로 받을 순 없다. 단, 각 파티션 별로 오프셋 순서대로 받는다. ![offset-order-issue02](./pictures/offset-order-issue02.png)
+	-	전체 메시지 순서대로 받을 순 없다. 단, 각 파티션 별로 오프셋 순서대로 받는다.
+
+	<img src="./pictures/offset-order-issue02.png" width="600">
 
 <br><br><br>
 
@@ -692,41 +696,41 @@ Consumer
 
 ##### 컨슈머그룹과 파티션 수의 관계
 
-![consumer-group01](./pictures/consumer-group01.png)
+<img src="./pictures/consumer-group01.png" width="600">
 
 -	각각의 파티션은 하나의 컨슈머그룹에 하나의 컨슈머하고만 연결된다.
 
-![consumer-group02](./pictures/consumer-group02.png)
+<img src="./pictures/consumer-group02.png" width="600">
 
 -	컨슈머가 하나였다가 3개로 늘어나면, 리발란싱이 일어난다.
 
-![consumer-group03](./pictures/consumer-group03.png)
+<img src="./pictures/consumer-group03.png" width="600">
 
 -	컨슈머 속도가 느려서 다빠르게 하고 싶어서 컨슈머 하나 추가하면?
 	-	추가된 컨슈머는 논다.
 
-![consumer-group04](./pictures/consumer-group04.png)
+<img src="./pictures/consumer-group04.png" width="600">
 
 -	컨슈머4에서 장애가 나면, 컨슈머그룹내에서는 모든 정보를 공유해 준다.
 
-![consumer-group05](./pictures/consumer-group05.png)
+<img src="./pictures/consumer-group05.png" width="600">
 
 -	컨슈머 그룹에선 자체적으로 리발란싱 일어난다.
 
-![consumer-group06](./pictures/consumer-group06.png)
+<img src="./pictures/consumer-group06.png" width="600">
 
 -	각 파티션이 초당 10개의 메시지 쏘고, 컨슈머는 초당 100개를 받는다. (문제없다.)
 
-![consumer-group07](./pictures/consumer-group07.png)
+<img src="./pictures/consumer-group07.png" width="600">
 
 -	갑자기 초당 400개의 메시지를 쏴서, 긴급히 컨슈머 2개 추가했음에도 불구하고 총 초당300개의 메시지만 가져감, 결과적으로 초당 100개의 메시지가 쌓인다.
 
-![consumer-group08](./pictures/consumer-group08.png)
+<img src="./pictures/consumer-group08.png" width="600">
 
 -	파티션을 하나 늘려주고, 컨슈머도 하나 늘려서 쌓일 가능성 있는 메시지를 처리한다.
 -	결과적으로 컨슈머를 늘려주기 위해 파티션을 늘린다.
 
-![multi-consumer](./pictures/multi-consumer.png)
+<img src="./pictures/multi-consumer.png" width="600">
 
 -	기본적으로 카프카는 메시지를 default로 7일간 보관
 -	컨슈머 그룹을 이용해 멀티 컨슈머 가능
@@ -744,17 +748,17 @@ Consumer
 
 ### Consumer 주요 옵션
 
--	bootstrap.servers : 브로커 리스트
--	group.id :
--	fetch.min.bytes : 최소 얼마나 가져올지
--	fetch.max.wait.ms : 얼마나 기다릴지
--	session.timeout.ms / 3 : 하트비트와 관련
--	heartbeat.interval.ms / 1 : 하트비트와 관련
-	-	session.timeoutms : heartbeat.interval.ms = 3 : 1 비율이 추천값
--	auto.offset.reset : 컨슈머가 오프셋 기준으로 메시지를 가져오는데 오프셋이 없는 경우가 있다. (오프셋4번까지 가져온상황에서 하둡에 붙였을때, 그럴때 자동으로 어떤값을 쓸거냐 정함)
--	enable.auto.commit :
--	auto.commit.interval.ms :
--	max.poll.records :
+-	`bootstrap.servers` : 브로커 리스트
+-	`group.id` :
+-	`fetch.min.bytes` : 최소 얼마나 가져올지
+-	`fetch.max.wait.ms` : 얼마나 기다릴지
+-	`session.timeout.ms / 3` : 하트비트와 관련
+-	`heartbeat.interval.ms / 1` : 하트비트와 관련
+	-	`session.timeout.ms` : `heartbeat.interval.ms` = 3 : 1 비율이 추천값
+-	`auto.offset.reset` : 컨슈머가 오프셋 기준으로 메시지를 가져오는데 오프셋이 없는 경우가 있다. (오프셋4번까지 가져온상황에서 하둡에 붙였을때, 그럴때 자동으로 어떤값을 쓸거냐 정함)
+-	`enable.auto.commit` :
+-	`auto.commit.interval.ms` :
+-	`max.poll.records` :
 
 <br><br>
 
@@ -768,7 +772,7 @@ Consumer
 	-	가장 많이 사용되고, 대부분 기본값으로 설정
 -	manual commit 물론 가능
 
-![auto-commit](./pictures/auto-commit.png)
+<img src="./pictures/auto-commit.png" width="700">
 
 -	2개 가져오는데 5초걸린다고 가정
 -	오토커밋이 5초 주기로 커밋함
@@ -777,7 +781,7 @@ Consumer
 
 ### auto-commit 이슈 1
 
-![auto-commit-issue-01](./pictures/auto-commit-issue-01.png)
+<img src="./pictures/auto-commit-issue-01.png" width="700">
 
 -	오토커밋하고 있는 중간에 컨슈머 다운되는 상황
 
@@ -790,7 +794,7 @@ Consumer
 
 ### auto-commit 이슈 2
 
-![auto-commit-issue-02](./pictures/auto-commit-issue-02.png)
+<img src="./pictures/auto-commit-issue-02.png" width="700">
 
 -	오토커밋하고 있는데 갑자기 메시지 못보내고 있는 상황
 
@@ -859,7 +863,7 @@ ElasticSearch
 -	빠르다. 빠른 속도로 데이터 엑세스
 -	수평적 확장이 가능
 -	어떤 데이터든 가능
--	https://www.elastic.co/kr/products/elasticsearch .
+-	https://www.elastic.co/kr/products/elasticsearch
 
 <br><br><br>
 

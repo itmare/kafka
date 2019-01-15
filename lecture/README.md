@@ -764,7 +764,7 @@ Consumer
 
 ### Commit
 
--	컨슈머가 파티션의 몇번째 offset까지 가져왔는지 표시
+-	컨슈머가 파티션의 몇번째 offset까지 가져왔는지 표시
 -	이러한 행동을 commit이라 함
 -	rebalancing이나 컨슈머 재시작 시 commit된 위치부터 시작
 -	auto commit

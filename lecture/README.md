@@ -247,27 +247,27 @@ Message Delivery Semantics: Consumer
 
 #### consumer의 at-most-once 동작 방식
 
-![consumer-at-most-once01](./pictures/consumer-at-most-once01.png)
+<img src="./pictures/consumer-at-most-once01.png" width="600">
 
 -	5개의 메시지를 가지고 있는 broker1 <br><br>
 
-![consumer-at-most-once02](./pictures/consumer-at-most-once02.png)
+<img src="./pictures/consumer-at-most-once02.png" width="600">
 
 -	컨슈머가 메시지1~3을 읽어 온다. (위치 기록)<br><br>
 
-![consumer-at-most-once03](./pictures/consumer-at-most-once03.png)
+<img src="./pictures/consumer-at-most-once03.png" width="600">
 
 -	다음 읽을 건 메시지4 라고 표시<br><br>
 
-![consumer-at-most-once04](./pictures/consumer-at-most-once04.png)
+<img src="./pictures/consumer-at-most-once04.png" width="600">
 
 -	메시지1 저장 후, 컨슈머가 죽는 상황<br><br>
 
-![consumer-at-most-once05](./pictures/consumer-at-most-once05.png)
+<img src="./pictures/consumer-at-most-once05.png" width="600">
 
 -	컨슈머 다시 살아남, 메시지2~3이 컨슈머에서 사라짐 <br><br>
 
-![consumer-at-most-once06](./pictures/consumer-at-most-once06.png)
+<img src="./pictures/consumer-at-most-once06.png" width="600">
 
 -	컨슈머 메시지4 부터 메시지 읽기 시작<br><br>
 
@@ -280,31 +280,31 @@ Message Delivery Semantics: Consumer
 
 #### consumer의 at-least-once 동작 방식
 
-![consumer-at-least-once01](./pictures/consumer-at-least-once01.png)
+<img src="./pictures/consumer-at-least-once01.png" width="600">
 
 -	5개의 메시지를 가지고 있는 broker1 <br><br>
 
-![consumer-at-least-once02](./pictures/consumer-at-least-once02.png)
+<img src="./pictures/consumer-at-least-once02.png" width="600">
 
 -	브로커로 부터 메시지1~3 읽음 (위치기록 안함)<br><br>
 
-![consumer-at-least-once03](./pictures/consumer-at-least-once03.png)
+<img src="./pictures/consumer-at-least-once03.png" width="600">
 
 -	메시지를 저장하고 위치를 기록 <br><br>
 
-![consumer-at-least-once04](./pictures/consumer-at-least-once04.png)
+<img src="./pictures/consumer-at-least-once04.png" width="600">
 
 -	메시지2를 저장하려고 보냄<br><br>
 
-![consumer-at-least-once05](./pictures/consumer-at-least-once05.png)
+<img src="./pictures/consumer-at-least-once05.png" width="600">
 
 -	메시지2의 저장이 완료전에 컨슈머가 죽음 (현재 위치 메시지2)<br><br>
 
-![consumer-at-least-once06](./pictures/consumer-at-least-once06.png)
+<img src="./pictures/consumer-at-least-once06.png" width="600">
 
 -	메시지2가 저장됐지만 현재 위치는 여전히 메시지2<br><br>
 
-![consumer-at-least-once07](./pictures/consumer-at-least-once07.png)
+<img src="./pictures/consumer-at-least-once07.png" width="600">
 
 -	컨슈머는 브로커로부터 다시 메시지2부터 가져온다. (중복)<br><br>
 

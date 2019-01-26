@@ -931,7 +931,7 @@ Pipelining
 
 ### Logstash
 
--	producer.conf 생성
+-	producer.conf 생성 (itmare02)
 
 ```shell
 ogstash API endpoint {:port=>9600}

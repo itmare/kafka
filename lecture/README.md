@@ -822,9 +822,7 @@ Consumer
 Kafka manager
 -------------
 
-.
-
-.
+[실습 참고](https://github.com/itmare/kafka/tree/master/practice#kafka-manager)
 
 <br><br><br><br><br>
 
@@ -845,7 +843,7 @@ filebeat
 
 <br><br><br>
 
-NIFI
+NiFi
 ----
 
 -	데이터 흐름을 정의하고, 정의된 흐름대로 자동으로 실행해주는 애플리케이션
